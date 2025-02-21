@@ -1,44 +1,25 @@
 workflows:
-  version: 2
-  build:
-    name: Build and Test Wear OS App
-    trigger:
-      event: push
-      branch: main
+  android_build:
+    name: Android Build & Test
+    max_build_duration: 60 # minutes
     environment:
-      flutter: stable
-      android: latest
+      android:
+        # Using the latest Codemagic Android image with required SDKs
+        image: codemagic/android:latest
     scripts:
-      - name: Install dependencies
-        script: |
-          flutter pub get
-          sdkmanager --install "platforms;android-30"
-      - name: Build APK
-        script: |
-          flutter build apk --release
-      - name: Run tests
-        script: |
-          flutter test
-    artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
-    publish:
-      branches:
-        - main
-      target: https://your-artifact-storage-link.com
+      # Clean the project
+      - echo "Cleaning the project..."
+      - ./gradlew clean
+      
+      # Run unit tests (if you have any tests)
+      - echo "Running unit tests..."
+      - ./gradlew test
+      
+      # Build the release version of the app
+      - echo "Building the release APK..."
+      - ./gradlew assembleRelease
 
-  test:
-    name: Test Wear OS App
-    trigger:
-      event: pull_request
-    environment:
-      flutter: stable
-      android: latest
-    scripts:
-      - name: Install dependencies
-        script: |
-          flutter pub get
-      - name: Run unit tests
-        script: |
-          flutter test
     artifacts:
-      - build/test-results/
+      # Collect the APK and/or AAB files from the outputs folder
+      - app/build/outputs/**/*.apk
+      - app/build/outputs/**/*.aab
