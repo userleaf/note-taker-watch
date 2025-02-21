@@ -1,5 +1,44 @@
 workflows:
-  hello-world:
-    name: Hello world workflow
+  version: 2
+  build:
+    name: Build and Test Wear OS App
+    trigger:
+      event: push
+      branch: main
+    environment:
+      flutter: stable
+      android: latest
     scripts:
-        - echo "Hello World!"
+      - name: Install dependencies
+        script: |
+          flutter pub get
+          sdkmanager --install "platforms;android-30"
+      - name: Build APK
+        script: |
+          flutter build apk --release
+      - name: Run tests
+        script: |
+          flutter test
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
+    publish:
+      branches:
+        - main
+      target: https://your-artifact-storage-link.com
+
+  test:
+    name: Test Wear OS App
+    trigger:
+      event: pull_request
+    environment:
+      flutter: stable
+      android: latest
+    scripts:
+      - name: Install dependencies
+        script: |
+          flutter pub get
+      - name: Run unit tests
+        script: |
+          flutter test
+    artifacts:
+      - build/test-results/
