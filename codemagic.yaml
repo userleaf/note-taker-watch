@@ -1,19 +1,16 @@
 workflows:
   android_build:
     name: Android Build & Test
-    max_build_duration: 60 # minutes
-    environment:
+    max_build_duration: 60
+    docker:
       image: codemagic/android:latest
     scripts:
       - echo "Cleaning the project..."
       - ./gradlew clean
-
       - echo "Running unit tests..."
       - ./gradlew test
-
       - echo "Building the release APK..."
       - ./gradlew assembleRelease
-
     artifacts:
       - app/build/outputs/**/*.apk
       - app/build/outputs/**/*.aab
