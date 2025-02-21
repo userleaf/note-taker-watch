@@ -3,9 +3,10 @@ workflows:
     name: Android Build & Test
     max_build_duration: 60 # minutes
     environment:
+      # Using the Codemagic default Android environment
       android:
-        # Using the latest Codemagic Android image with required SDKs
-        image: codemagic/android:latest
+        version: 30 # Use the Android SDK version you need
+        gradle: latest # Or specify a specific version of Gradle if necessary
     scripts:
       # Clean the project
       - echo "Cleaning the project..."
@@ -20,6 +21,4 @@ workflows:
       - ./gradlew assembleRelease
 
     artifacts:
-      # Collect the APK and/or AAB files from the outputs folder
-      - app/build/outputs/**/*.apk
-      - app/build/outputs/**/*.aab
+      # Collect the APK and/or AAB files from the ou
